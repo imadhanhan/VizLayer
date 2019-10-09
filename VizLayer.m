@@ -1,6 +1,6 @@
 function varargout = VizLayer(varargin)
 % Begin initialization code - DO NOT EDIT
-gui_Singleton = 1;
+gui_Singleton = 0;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
                    'gui_OpeningFcn', @VizLayer_OpeningFcn, ...
@@ -27,13 +27,22 @@ function VizLayer_OpeningFcn(hObject, eventdata, handles, varargin)
 z=1; %intializes as slice = first slice
 
 data1=varargin{1}; %asigns the first window data1
+data2=varargin{2}; %asigns the second window data2
+
+handles.data1=data1;
+handles.data2=data2;
+handles.data1min=min(data1(:));
+handles.data2min=min(data2(:));
+handles.data1max=max(data1(:));
+handles.data2max=max(data2(:));
+
 imagesc(handles.axes1, data1(:,:,z)); %visualize the data
 colormap(handles.axes1, 'gray') %set the colormap for tomography
+caxis(  handles.axes1, [handles.data1min handles.data1max]);
 
-data2=varargin{2}; %asigns the second window data2
 imagesc(handles.axes2, data2(:,:,z)); %visualize the data
 colormap(handles.axes2, 'gray') %set the colormap for tomography
-
+caxis(  handles.axes2, [handles.data2min handles.data2max]);
 % linkaxes([handles.axes1,handles.axes2],'xy')
 % Choose default command line output for VizLayer
 handles.output = hObject;
@@ -41,8 +50,7 @@ handles.output = hObject;
 handles.size1=size(data1);
 handles.size2=size(data2);
 
-handles.data1=data1;
-handles.data2=data2;
+
 
 s1=handles.size1;
 s2=handles.size2;
@@ -109,6 +117,7 @@ data2=handles.data2;
 
 %plot image1
 imagesc(handles.axes1, data1(:,:,floor(z1)));
+caxis(  handles.axes1, [handles.data1min handles.data1max]);
 set(handles.edit1, 'String', num2str(floor(z1)));
 if popmv1<18
     colormap(handles.axes1, options{popmv1}); %set the colormap for tomography
@@ -125,6 +134,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
     set(handles.slider2, 'Value', z1);
     set(handles.edit2, 'String', num2str(floor(z1)));
     imagesc(handles.axes2, data2(:,:,floor(z1)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -180,6 +190,7 @@ if get(handles.checkbox2, 'Value') == 0 %if NOT linking z axes
     data2=handles.data2;
     z2=get(handles.slider2,'Value');
     imagesc(handles.axes2, data2(:,:,floor(z2)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -193,6 +204,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
     data2=handles.data2;
     z2=get(handles.slider2,'Value');
     imagesc(handles.axes1, data1(:,:,floor(z2)));
+    caxis(  handles.axes1, [handles.data1min handles.data1max]);
     if popmv1<18
         colormap(handles.axes1, options{popmv1}); %set the colormap for tomography
     elseif popmv1==18
@@ -201,6 +213,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
         colormap(handles.axes1,myColorMap);
     end
     imagesc(handles.axes2, data2(:,:,floor(z2)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -272,6 +285,7 @@ options={'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'w
     'copper', 'pink', 'lines', 'colorcube', 'prism', 'flag', 'jetwhite'};
 
 imagesc(handles.axes2, data2(:,:,floor(z1)));
+caxis(  handles.axes2, [handles.data2min handles.data2max]);
 if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -422,6 +436,7 @@ data2=handles.data2;
 
 %plot image1
 imagesc(handles.axes1, data1(:,:,floor(z1)));
+caxis(  handles.axes1, [handles.data1min handles.data1max]);
 set(handles.edit1, 'String', num2str(floor(z1)));
 if popmv1<18
     colormap(handles.axes1, options{popmv1}); %set the colormap for tomography
@@ -438,6 +453,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
     set(handles.slider2, 'Value', z1);
     set(handles.edit2, 'String', num2str(floor(z1)));
     imagesc(handles.axes2, data2(:,:,floor(z1)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -476,6 +492,7 @@ if get(handles.checkbox2, 'Value') == 0 %if NOT linking z axes
     z2=str2double(get(handles.edit2,'string'));
     set(handles.slider2, 'Value', z2);
     imagesc(handles.axes2, data2(:,:,floor(z2)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
@@ -489,6 +506,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
     data2=handles.data2;
     z2=str2double(get(handles.edit2,'string'));
     imagesc(handles.axes1, data1(:,:,floor(z2)));
+    caxis(  handles.axes1, [handles.data1min handles.data1max]);
     if popmv1<18
         colormap(handles.axes1, options{popmv1}); %set the colormap for tomography
     elseif popmv1==18
@@ -497,6 +515,7 @@ elseif get(handles.checkbox2, 'Value') == 1 %if linking z axes
         colormap(handles.axes1,myColorMap);
     end
     imagesc(handles.axes2, data2(:,:,floor(z2)));
+    caxis(  handles.axes2, [handles.data2min handles.data2max]);
     if popmv2<18
         colormap(handles.axes2, options{popmv2}); %set the colormap for tomography
     elseif popmv2==18
