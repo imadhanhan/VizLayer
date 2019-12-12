@@ -1,12 +1,24 @@
+%VizLayer  Visualizes two sets of 3D data.
+%   VizLayer(volume1, volume2, ...) opens the VizLayer tool with volume1, a
+%   3D matrix, as stacked images on the left, and volume2, a 3D matrix, as 
+%   stacked images on the right. 
+%
+%   VizLayer(volume1, volume2, Title1, Title2) opens the VizLayer 
+%   tool with volume1, a 3D matrix, as stacked images on the left titled 
+%   with the string defined in Title1, and volume2, a 3D matrix, as 
+%   stacked images on the right titled with the string defined in Title2. 
+%   
+%   Written by Imad Hanhan, 2019.
+
 function varargout = VizLayer(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @VizLayer_OpeningFcn, ...
-                   'gui_OutputFcn',  @VizLayer_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @VizLayer_OpeningFcn, ...
+    'gui_OutputFcn',  @VizLayer_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -17,17 +29,31 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before VizLayer is made visible.
 function VizLayer_OpeningFcn(hObject, eventdata, handles, varargin)
 % set(gcf, 'units', 'normalized', 'position', [0.05 0.15 1 1]); %this sets the window aspect ratio
 % daspect(handles.axes1, [1 1 1]); %this sets the aspect ratio of axes1
 % daspect(handles.axes2, [1 1 1]); %this sets the aspect ratio of axes2
+% global name1 name2
+% 
+% set(handles.text4, 'String', name1);
+% set(handles.text8, 'String', name2);
 
 z=1; %intializes as slice = first slice
 
+
 data1=varargin{1}; %asigns the first window data1
 data2=varargin{2}; %asigns the second window data2
+
+if length(varargin)>2 %check if user specified title input
+    if length(varargin)>3
+        string2=varargin{4};
+        set(handles.text8, 'String', string2);
+    end
+    string1=varargin{3};
+    set(handles.text4, 'String', string1);
+end
+
 
 handles.data1=data1;
 handles.data2=data2;
@@ -50,8 +76,6 @@ handles.output = hObject;
 handles.size1=size(data1);
 handles.size2=size(data2);
 
-
-
 s1=handles.size1;
 s2=handles.size2;
 
@@ -73,6 +97,10 @@ set(handles.text10, 'String', num2str(1))
 %Colormapr options
 set(handles.popupmenu1, 'Value', 10)
 set(handles.popupmenu2, 'Value', 10)
+
+set(handles.popupmenu2, 'Value', 10)
+
+
 
 % Update handles structure
 guidata(hObject, handles);
