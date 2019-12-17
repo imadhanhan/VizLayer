@@ -73,23 +73,37 @@ caxis(  handles.axes2, [handles.data2min handles.data2max]);
 % Choose default command line output for VizLayer
 handles.output = hObject;
 
-handles.size1=size(data1);
-handles.size2=size(data2);
+s1=size(data1);
+s2=size(data2);
 
-s1=handles.size1;
-s2=handles.size2;
+if size(s1)<3 %if it's a 2D image
+    s1(3)=1; %set the third dimension to 1
+    slider_step1=0; %set the slider step to 0, will make slider bar not do anything
+else
+    slider_step1=1/(s1(3)-1); %otherwise, set the slider bar to a correct stepsize
+end
+
+if size(s2)<3 %if data_modify is a 2D image
+    s2(3)=1; %set the third dimension to 1
+    slider_step2=0;%set the slider step to 0, will make slider bar not do anything
+else
+    slider_step2=1/(s2(3)-1);%otherwise, set the slider bar to a correct stepsize
+end
+
+handles.size1=s1;
+handles.size2=s2;
 
 set(handles.slider1, 'min',1);
 set(handles.slider1, 'max',s1(3));
 set(handles.slider1, 'Value', 1);
-set(handles.slider1, 'SliderStep', [1/(s1(3)-1) , 1/(s1(3)-1) ]);
+set(handles.slider1, 'SliderStep', [slider_step1 , slider_step1 ]);
 set(handles.text2, 'String', num2str(s1(3)))
 set(handles.text3, 'String', num2str(1))
 
 set(handles.slider2, 'min',1);
 set(handles.slider2, 'max',s2(3));
 set(handles.slider2, 'Value', 1);
-set(handles.slider2, 'SliderStep', [1/(s2(3)-1) , 1/(s2(3)-1) ]);
+set(handles.slider2, 'SliderStep', [slider_step2 , slider_step2 ]);
 set(handles.text9, 'String', num2str(s2(3)))
 set(handles.text10, 'String', num2str(1))
 
