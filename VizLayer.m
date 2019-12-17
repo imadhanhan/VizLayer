@@ -3,11 +3,15 @@
 %   3D matrix, as stacked images on the left, and volume2, a 3D matrix, as 
 %   stacked images on the right. 
 %
-%   VizLayer(volume1, volume2, Title1, Title2) opens the VizLayer 
+%   VizLayer(volume1, volume2, 'title', Title1, 'title', Title2) opens the VizLayer 
 %   tool with volume1, a 3D matrix, as stacked images on the left titled 
 %   with the string defined in Title1, and volume2, a 3D matrix, as 
 %   stacked images on the right titled with the string defined in Title2. 
-%   
+%
+%   VizLayer( __ , 'colormap', colormap) opens the VizLayer 
+%   tool with volume1, a 3D matrix, as stacked images on the left titled 
+%   with the colormap defined in string colormap.
+%
 %   Written by Imad Hanhan, 2019.
 
 function varargout = VizLayer(varargin)
@@ -45,15 +49,40 @@ z=1; %intializes as slice = first slice
 data1=varargin{1}; %asigns the first window data1
 data2=varargin{2}; %asigns the second window data2
 
+% if length(varargin)>2 %check if user specified title input
+%     if length(varargin)>3
+%         string2=varargin{4};
+%         set(handles.text8, 'String', string2);
+%     end
+%     string1=varargin{3};
+%     set(handles.text4, 'String', string1);
+% end
+options={'parula', 'jet', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'winter', 'gray', 'bone', ... 
+                         'copper', 'pink', 'lines', 'colorcube', 'prism', 'flag', 'jetwhite'};
+                     
 if length(varargin)>2 %check if user specified title input
-    if length(varargin)>3
-        string2=varargin{4};
-        set(handles.text8, 'String', string2);
-    end
-    string1=varargin{3};
-    set(handles.text4, 'String', string1);
+            t_inp=strcmp(varargin,'title'); %vector with 1's where title is
+            if any(t_inp)
+                t_pos=find(t_inp==1)+1;
+                string1=varargin{t_pos(1)};
+                set(handles.text4, 'String', string1);
+                if length(t_pos)>1 %user defined second name
+                    string2=varargin{t_pos(2)};
+                    set(handles.text8, 'String', string2);
+                end
+            end
+            
+            c_inp=strcmp(varargin,'colormap'); %vector with 1's where title is
+            if any(c_inp)
+                c_pos=find(c_inp==1)+1;
+                color_choice=varargin{c_pos};
+                option2num=find( strcmp(options, color_choice) == 1);
+            end
 end
 
+if exist('option2num','var')==0
+    option2num=10;
+end
 
 handles.data1=data1;
 handles.data2=data2;
@@ -64,11 +93,26 @@ handles.data2max=max(data2(:));
 
 imagesc(handles.axes1, data1(:,:,z)); %visualize the data
 colormap(handles.axes1, 'gray') %set the colormap for tomography
+if option2num<18
+    colormap(handles.axes1, options{option2num}); %set the colormap for tomography
+elseif option2num==18
+    myColorMap = jet(256); %colormap used for indexing, where 0 is white
+    myColorMap(1,:) = 1;
+    colormap(handles.axes1,myColorMap);
+end
 caxis(  handles.axes1, [handles.data1min handles.data1max]);
 
 imagesc(handles.axes2, data2(:,:,z)); %visualize the data
 colormap(handles.axes2, 'gray') %set the colormap for tomography
 caxis(  handles.axes2, [handles.data2min handles.data2max]);
+if option2num<18
+    colormap(handles.axes2, options{option2num}); %set the colormap for tomography
+elseif option2num==18
+    myColorMap = jet(256); %colormap used for indexing, where 0 is white
+    myColorMap(1,:) = 1;
+    colormap(handles.axes2,myColorMap);
+end
+
 % linkaxes([handles.axes1,handles.axes2],'xy')
 % Choose default command line output for VizLayer
 handles.output = hObject;
@@ -109,10 +153,8 @@ set(handles.text10, 'String', num2str(1))
 
 
 %Colormapr options
-set(handles.popupmenu1, 'Value', 10)
-set(handles.popupmenu2, 'Value', 10)
-
-set(handles.popupmenu2, 'Value', 10)
+set(handles.popupmenu1, 'Value', option2num)
+set(handles.popupmenu2, 'Value', option2num)
 
 
 
