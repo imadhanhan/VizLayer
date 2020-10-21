@@ -86,10 +86,10 @@ end
 
 handles.data1=data1;
 handles.data2=data2;
-handles.data1min=min(data1(:));
-handles.data2min=min(data2(:));
-handles.data1max=max(data1(:));
-handles.data2max=max(data2(:));
+handles.data1min=double(min(data1(:)));
+handles.data2min=double(min(data2(:)));
+handles.data1max=double(max(data1(:)));
+handles.data2max=double(max(data2(:)));
 
 imagesc(handles.axes1, data1(:,:,z)); %visualize the data
 colormap(handles.axes1, 'gray') %set the colormap for tomography
